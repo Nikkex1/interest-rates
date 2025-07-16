@@ -46,6 +46,17 @@ class VasicekModel():
 
         return self.__rates
     
+    def get_params(self):
+        """Returns the model parameters as a dictionary."""
+
+        return {"theta":self.__theta,
+                "mu":self.__mu,
+                "sigma":self.__sigma,
+                "r0":self.__r0,
+                "T":self.__T,
+                "N":self.__N,
+                "dt":self.__dt}
+    
 class CIRModel():
     """Discrete Cox-Ingersoll-Ross model"""
 
@@ -91,8 +102,22 @@ class CIRModel():
             self.__rates[t] = self.__rates[t-1] + dr
 
         return self.__rates
+    
+    def get_params(self):
+        """Returns the model parameters as a dictionary."""
+
+        return {"theta":self.__theta,
+                "mu":self.__mu,
+                "sigma":self.__sigma,
+                "r0":self.__r0,
+                "T":self.__T,
+                "N":self.__N,
+                "dt":self.__dt}
 
 if __name__ == "__main__":
     model1 = VasicekModel(2,0.05,0.02,0.03)
     model2 = CIRModel(2,0.05,0.02,0.03)
     print(model2.get_rates())
+    parameters = model1.get_params()
+    print(parameters)
+    print(parameters["theta"])
