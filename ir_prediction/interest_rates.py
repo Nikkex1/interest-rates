@@ -5,8 +5,12 @@ class Euribor():
 
     def __init__(self, maturity: str = "3 months"):
         """
-        Fetch Euribor rates by maturity.
+        Fetch Euribor rates of a given maturity.
+
+        Parameters
+        ----------
         """
+
         self.__maturity = maturity
 
     def get_current(self):
@@ -19,24 +23,6 @@ class Euribor():
 
         df = self.__construct(by=0)
         df.rename(columns={1: f"Daily rates ({self.__maturity})"},
-                  inplace=True)
-
-        return df
-    
-    def get_monthly(self):
-        """Returns the Euribor rates on the first day of the month from the last 10 months."""
-
-        df = self.__construct(by=1)
-        df.rename(columns={1: f"Monthly rates ({self.__maturity})"},
-                  inplace=True)
-
-        return df
-    
-    def get_annual(self):
-        """Returns the Euribor rates on the first day of the year from the last 10 years."""
-
-        df = self.__construct(by=2)
-        df.rename(columns={1: f"Annual rates ({self.__maturity})"},
                   inplace=True)
 
         return df
@@ -77,8 +63,48 @@ class Euribor():
 
         return df
     
-    def fetch_by_year(self, y: int = 2025):
-        """Returns the monthly rates of a given year for the given maturity."""
+    def get_yearly(self, start: str, end: str):
+        """Returns the yearly rates from the first day of the year in the given date range."""
+
+        # For slicing the df without months and days
+        s = pd.to_datetime(start).strftime("%Y")
+        e = pd.to_datetime(end).strftime("%Y")
+
+        df = self.__concat(s,e)
+        mask = df.index.month == 1
+
+        return df[mask]
+    
+    def get_monthly(self, start: str, end: str):
+        """Returns monthly rates from the first day of the month in the given date range."""
+
+        # For slicing the df without days
+        s = pd.to_datetime(start).strftime("%Y/%m")
+        e = pd.to_datetime(end).strftime("%Y/%m")
+
+        df = self.__concat(s,e)
+        df.rename(columns={0:f"Euribor ({self.__maturity})"},inplace=True)
+
+        return df[s:e]
+    
+    def __concat(self, s: str, e: str):
+        """Returns the monthly rates for several years in a single DataFrame."""
+
+        s_year = pd.to_datetime(s).year
+        e_year = pd.to_datetime(e).year
+        y_range = range(s_year,e_year + 1)
+
+        df_list = [self.__fetch_by_year(year) for year in y_range]
+
+        return pd.concat(df_list)
+    
+    def __fetch_by_year(self, y: int):
+        """Returns the cleaned monthly rates of a given year for the given maturity."""
+
+        # Check validity of the year:
+        current_year = pd.Timestamp.today().year
+        if y > current_year or y < 1999:
+            raise ValueError(f"{y} is an invalid year (valid range: 1999 - {current_year}).")
 
         # Construct the url:
         d = {"1 month": 1,
@@ -112,7 +138,7 @@ class Euribor():
 
         # Convert the string rates ("X.xx %") to float (0.0Xxx)
         r_column = (np.char.replace(list(df[0])," %","").astype(float)) / 100
-        df[0] = r_column
+        df[0] = r_column.round(5) # round to avoid errors due to python miscalculations
 
         return df
 
@@ -124,4 +150,6 @@ if __name__ == "__main__":
                   "12 months"] #4
 
     r = Euribor()
-    print(r.fetch_by_year())
+    #print(r.get_monthly("1999","2025/07"))
+
+    print(r.get_yearly("1999/01/11","2025/07/31"))
