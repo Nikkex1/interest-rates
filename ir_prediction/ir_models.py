@@ -1,12 +1,14 @@
 import numpy as np
+import pandas as pd
 
 class VasicekModel():
-    """Discrete Vasicek model"""
 
     def __init__(self, theta: float, mu: float, sigma: float, r0: float,
                  T: float = 1.0,
                  N: int = 252):
         """
+        Discrete Vasicek model
+
         Parameters
         ----------
         theta: `float`
@@ -58,12 +60,13 @@ class VasicekModel():
                 "dt":self.__dt}
     
 class CIRModel():
-    """Discrete Cox-Ingersoll-Ross model"""
 
     def __init__(self, theta: float, mu: float, sigma: float, r0: float,
                  T: float = 1.0,
                  N: int = 252):
         """
+        Discrete Cox-Ingersoll-Ross model
+
         Parameters
         ----------
         theta: `float`
