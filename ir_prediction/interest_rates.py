@@ -20,6 +20,9 @@ class Euribor():
 
         self.__maturity = maturity
 
+
+    # Getters for current, daily, monthly and yearly
+
     def get_current(self):
         """Returns the Euribor rate of the previous business day."""
 
@@ -34,6 +37,18 @@ class Euribor():
 
         return df
     
+    def get_monthly(self, start: str, end: str):
+        """Returns monthly rates from the first day of the month in the given date range."""
+
+        # For slicing the df without days
+        s = pd.to_datetime(start).strftime("%Y/%m")
+        e = pd.to_datetime(end).strftime("%Y/%m")
+
+        df = self.__concat(s,e)
+        df.rename(columns={0:f"Euribor ({self.__maturity})"},inplace=True)
+
+        return df[s:e]
+    
     def get_yearly(self, start: str, end: str):
         """Returns the yearly rates from the first day of the year in the given date range."""
 
@@ -47,17 +62,36 @@ class Euribor():
 
         return df[mask]
     
-    def get_monthly(self, start: str, end: str):
-        """Returns monthly rates from the first day of the month in the given date range."""
 
-        # For slicing the df without days
-        s = pd.to_datetime(start).strftime("%Y/%m")
-        e = pd.to_datetime(end).strftime("%Y/%m")
+    # Aggregate methods
 
-        df = self.__concat(s,e)
-        df.rename(columns={0:f"Euribor ({self.__maturity})"},inplace=True)
+    def mean(self, start: str = "1999", end: str = str(pd.Timestamp.today().year)):
+        """Returns the mean of the Euribor rate for the specified date range."""
 
-        return df[s:e]
+        df = self.__concat(start,end)
+
+        return round(df[0].mean(),5)
+    
+    def variance(self, start: str = "1999", end: str = str(pd.Timestamp.today().year)):
+        """Returns the variance of the Euribor rate for the specified date range."""
+        
+        df = self.__concat(start,end)
+
+        values_a = np.array(df[0])
+        mean_a = np.full(len(values_a),values_a.mean())
+        deviation_a = values_a - mean_a
+        d_squared_a = deviation_a ** 2
+        variance = d_squared_a.sum() / len(values_a)
+
+        return variance
+    
+    def std(self, start: str = "1999", end: str = str(pd.Timestamp.today().year)):
+        """Returns the standard deviation of the Euribor rate for the specified date range."""
+        
+        return np.sqrt(self.variance(start,end))
+
+
+    # Hidden methods for web scraping and calculations
     
     def __concat(self, s: str, e: str):
         """Returns the monthly rates for several years in a single DataFrame."""
@@ -144,9 +178,12 @@ class Euribor():
 
 if __name__ == "__main__":
 
-    r = Euribor("12 months")
+    r = Euribor("3 months")
     #print(r.get_monthly("1999","2025/07"))
 
     #print(r.get_yearly("1999/01/11","2025/07/31"))
-    print(r.get_daily())
-    print(r.get_current())
+    #print(r.get_daily())
+    #print(r.get_current())
+
+    print(r.variance())
+    print(r.std())
