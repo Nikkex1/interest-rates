@@ -7,7 +7,7 @@ class VasicekModel():
                  T: float = 1.0,
                  N: int = 252):
         """
-        Discrete Vasicek model
+        Discrete Vasicek model for forecasting interest rates.
 
         Parameters
         ----------
@@ -32,11 +32,15 @@ class VasicekModel():
         self.__T = T
         self.__N = N
         
-        self.__dt = T/N # size of a single time step
+        self.__dt = T/N # size of a single time step (dt = 1/252 is one business day)
         self.__rates = np.zeros(self.__N)
 
     def get_rates(self):
-        """Returns the interest rates from t = 0 to T."""
+        """
+        Returns the simulated interest rates.
+
+        The interest rates are returned from the current point of time (t = 0) to the specified time horizon (T).
+        """
 
         self.__rates[0] = self.__r0 # start from the initial interest rate
 
@@ -65,7 +69,7 @@ class CIRModel():
                  T: float = 1.0,
                  N: int = 252):
         """
-        Discrete Cox-Ingersoll-Ross model
+        Discrete Cox-Ingersoll-Ross model for forecasting interest rates.
 
         Parameters
         ----------
@@ -94,7 +98,11 @@ class CIRModel():
         self.__rates = np.zeros(self.__N)
 
     def get_rates(self):
-        """Returns the interest rates from t = 0 to T."""
+        """
+        Returns the simulated interest rates.
+
+        The interest rates are returned from the current point of time (t = 0) to the specified time horizon (T).
+        """
 
         self.__rates[0] = self.__r0 # start from the initial interest rate
 
@@ -118,9 +126,4 @@ class CIRModel():
                 "dt":self.__dt}
 
 if __name__ == "__main__":
-    model1 = VasicekModel(2,0.05,0.02,0.03)
-    model2 = CIRModel(2,0.05,0.02,0.03)
-    print(model2.get_rates())
-    parameters = model1.get_params()
-    print(parameters)
-    print(parameters["theta"])
+    pass
