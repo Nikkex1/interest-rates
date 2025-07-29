@@ -21,7 +21,7 @@ class Euribor():
         self.__maturity = maturity
 
 
-    # Getters for current, daily, monthly and yearly
+    # Getters for current, daily, monthly and yearly Euribor rates
 
     def get_current(self):
         """Returns the Euribor rate of the previous business day."""
@@ -29,7 +29,7 @@ class Euribor():
         return self.get_daily().iloc[0,0]
 
     def get_daily(self):
-        """Returns the daily Euribor rates from the last 10 days."""
+        """Returns the daily Euribor rates from the last 10 business days."""
 
         df = self.__fetch_by_day()
         df.rename(columns={1: f"Euribor ({self.__maturity})"},
@@ -38,9 +38,18 @@ class Euribor():
         return df
     
     def get_monthly(self, start: str, end: str):
-        """Returns monthly rates from the first day of the month in the given date range."""
+        """
+        Returns monthly rates from the first day of the month in the given date range.
+        
+        Parameters
+        ----------
+        start: `str`
+            The start date in "YYYY/mm" format
+        end: `str`
+            The end date in "YYYY/mm" format
+        """
 
-        # For slicing the df without days
+        # For slicing the df without days if the user provides them nevertheless
         s = pd.to_datetime(start).strftime("%Y/%m")
         e = pd.to_datetime(end).strftime("%Y/%m")
 
@@ -50,9 +59,18 @@ class Euribor():
         return df[s:e]
     
     def get_yearly(self, start: str, end: str):
-        """Returns the yearly rates from the first day of the year in the given date range."""
+        """
+        Returns the yearly rates from the first day of the year in the given date range.
+        
+        Parameters
+        ----------
+        start: `str`
+            The start date in "YYYY" format
+        end: `str`
+            The end date in "YYYY" format
+        """
 
-        # For slicing the df without months and days
+        # For slicing the df without months and days if the user provides them nevertheless
         s = pd.to_datetime(start).strftime("%Y")
         e = pd.to_datetime(end).strftime("%Y")
 
@@ -66,14 +84,36 @@ class Euribor():
     # Aggregate methods
 
     def mean(self, start: str = "1999", end: str = str(pd.Timestamp.today().year)):
-        """Returns the mean of the Euribor rate for the specified date range."""
+        """
+        Returns the mean of the Euribor rate for the specified date range.
+        
+        By default the mean is calculated from January 1999 to the current date with monthly precision.
+
+        Parameters
+        ----------
+        start: `str` = "1999"
+            The start date for calculating the mean
+        end: `str` = str(pd.Timestamp.today().year)
+            The end date for calculating the mean
+        """
 
         df = self.__concat(start,end)
 
         return round(df[0].mean(),5)
     
     def variance(self, start: str = "1999", end: str = str(pd.Timestamp.today().year)):
-        """Returns the variance of the Euribor rate for the specified date range."""
+        """
+        Returns the variance of the Euribor rate for the specified date range.
+        
+        By default the variance is calculated from January 1999 to the current date with monthly precision.
+
+        Parameters
+        ----------
+        start: `str` = "1999"
+            The start date for calculating the variance
+        end: `str` = str(pd.Timestamp.today().year)
+            The end date for calculating the variance
+        """
         
         df = self.__concat(start,end)
 
@@ -86,7 +126,18 @@ class Euribor():
         return variance
     
     def std(self, start: str = "1999", end: str = str(pd.Timestamp.today().year)):
-        """Returns the standard deviation of the Euribor rate for the specified date range."""
+        """
+        Returns the standard deviation of the Euribor rate for the specified date range.
+        
+        By default the standard deviation is calculated from January 1999 to the current date with monthly precision.
+
+        Parameters
+        ----------
+        start: `str` = "1999"
+            The start date for calculating the standard deviation
+        end: `str` = str(pd.Timestamp.today().year)
+            The end date for calculating the standard deviation
+        """
         
         return np.sqrt(self.variance(start,end))
 
@@ -177,13 +228,4 @@ class Euribor():
         return df
 
 if __name__ == "__main__":
-
-    r = Euribor("3 months")
-    #print(r.get_monthly("1999","2025/07"))
-
-    #print(r.get_yearly("1999/01/11","2025/07/31"))
-    #print(r.get_daily())
-    #print(r.get_current())
-
-    print(r.variance())
-    print(r.std())
+    pass
