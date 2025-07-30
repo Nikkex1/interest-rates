@@ -1,11 +1,11 @@
-from interest_rates import Euribor
+from ir_forecast.interest_rates import Euribor
 
 r = Euribor(maturity="3 months")
 
 monthly = r.get_monthly(start="2024/01", end="2025/07")
 print(monthly)
 
-from ir_models import VasicekModel, CIRModel
+from ir_forecast.ir_models import VasicekModel, CIRModel
 
 theta_val = 0.5
 mu_val = 0.02
@@ -23,7 +23,7 @@ cir = CIRModel(theta=theta_val,
                sigma=volatility,
                r0=initial)
 
-from monte_carlo import MonteCarlo
+from ir_forecast.monte_carlo import MonteCarlo
 
 vasicek_mc = MonteCarlo(model=vasicek,
                         number_of_simulations=100)

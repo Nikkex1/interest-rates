@@ -1,3 +1,18 @@
+Metadata-Version: 2.4
+Name: ir_forecast
+Version: 0.0.1
+Summary: Fetch historical Euribor data, initialize stochastic prediction models and forecast interest rates with Monte Carlo simulations.
+Author-email: Niklas Pulliainen <niklas.pulliainen@gmail.com>
+License-Expression: MIT
+Project-URL: Homepage, https://github.com/Nikkex1/interest-rates
+Project-URL: Issues, https://github.com/Nikkex1/interest-rates/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.12
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Dynamic: license-file
+
 # Interest Rate Forecasting
 
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
@@ -42,7 +57,7 @@ Historical Euribor data is available for the following maturities:
 - 12 months
 
 ```
-from ir_forecast.interest_rates import Euribor
+from interest_rates import Euribor
 
 r = Euribor(maturity="3 months")
 ```
@@ -103,7 +118,7 @@ Both models are initialized with the following parameters:
 Let's assume an arbitrary example with a mean reversion speed of 0.5, long-term mean interest rate of 2%, 0.2 volatility and an initial interest rate of 4%:
 
 ```
-from ir_forecast.ir_models import VasicekModel, CIRModel
+from ir_models import VasicekModel, CIRModel
 
 theta_val = 0.5
 mu_val = 0.02
@@ -129,7 +144,7 @@ cir = CIRModel(theta=theta_val,
 Simulate the Vasicek Model with 100 Monte Carlo simulation runs:
 
 ```
-from ir_forecast.monte_carlo import MonteCarlo
+from monte_carlo import MonteCarlo
 
 vasicek_mc = MonteCarlo(model=vasicek,
                         number_of_simulations=100)
