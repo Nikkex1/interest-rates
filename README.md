@@ -13,7 +13,7 @@ Work with historical Euribor data and forecast interest rates utilizing stochast
 
 NumPy, pandas and Matplotlib are required:
 
-```
+```python
 pip install numpy
 pip install pandas
 pip install matplotlib
@@ -26,7 +26,7 @@ https://www.anaconda.com/download
 
 Install with pip:
 
-```
+```python
 pip install ir_forecast
 ```
 ## Example
@@ -41,7 +41,7 @@ Historical Euribor data is available for the following maturities:
 - 6 months
 - 12 months
 
-```
+```python
 from ir_forecast.interest_rates import Euribor
 
 r = Euribor(maturity="3 months")
@@ -56,7 +56,7 @@ There are four methods for fetching the data:
 
 The `get_current()` method returns the most recent rate of the previous business day as a float, whereas the others return date indexed DataFrames for the user specified date ranges:
 
-```
+```python
 monthly = r.get_monthly(start="2024/01", end="2025/07")
 print(monthly)
 ```
@@ -102,7 +102,7 @@ Both models are initialized with the following parameters:
 
 Let's assume an arbitrary example with a mean reversion speed of 0.5, long-term mean interest rate of 2%, 0.2 volatility and an initial interest rate of 4%:
 
-```
+```python
 from ir_forecast.ir_models import VasicekModel, CIRModel
 
 theta_val = 0.5
@@ -128,7 +128,7 @@ cir = CIRModel(theta=theta_val,
 
 Simulate the Vasicek Model with 100 Monte Carlo simulation runs:
 
-```
+```python
 from ir_forecast.monte_carlo import MonteCarlo
 
 vasicek_mc = MonteCarlo(model=vasicek,
@@ -137,7 +137,7 @@ vasicek_mc = MonteCarlo(model=vasicek,
 
 The `results()` method returns a DataFrame with each column representing a single simulation run. The `visualize()` method shows the simulated interest rate paths alongside with 0.9, 0.5 and 0.1 quantiles:
 
-```
+```python
 vasicek_mc.visualize()
 ```
 
@@ -145,7 +145,7 @@ vasicek_mc.visualize()
 
 The `stats()` method shows summary statistic of the simulation:
 
-```
+```python
 print(vasicek_mc.stats())
 ```
 
