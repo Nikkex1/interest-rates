@@ -88,8 +88,8 @@ The package contains two stochastic models for forecasting interest rates:
 - Vasicek Model
 - Cox-Ingersoll-Ross Model
 
-For theoretical background on the models, see:
-https://en.wikipedia.org/wiki/Vasicek_model
+For theoretical background on the models, see:<br>
+https://en.wikipedia.org/wiki/Vasicek_model<br>
 https://en.wikipedia.org/wiki/Cox%E2%80%93Ingersoll%E2%80%93Ross_model
 
 Both models are initialized with the following parameters:
@@ -141,7 +141,7 @@ The `results()` method returns a DataFrame with each column representing a singl
 vasicek_mc.visualize()
 ```
 
-`![Image of the simulated interest rate paths.](mc_example.png)`
+![Image of the simulated interest rate paths.](mc_example.png)
 
 The `stats()` method shows summary statistic of the simulation:
 
