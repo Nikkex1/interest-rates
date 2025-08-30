@@ -13,7 +13,7 @@ Work with historical Euribor data and forecast interest rates utilizing stochast
 
 NumPy, pandas and Matplotlib are required:
 
-```
+```python
 pip install numpy
 pip install pandas
 pip install matplotlib
@@ -22,16 +22,21 @@ pip install matplotlib
 The Anaconda distribution for Python is recommended, which includes all the requirements:
 
 https://www.anaconda.com/download
-## Installation
+## Usage
 
-Install with pip:
-
-```
-pip install ir_forecast
-```
+Copy the following files from src to your working directory:
+- `interest_rates.py` for fetching historical data
+- `ir_models.py` for initializing interest rate models
+- `monte_carlo.py` for simulating and visualizing the models
 ## Example
 
 This example shows how to fetch historical Euribor data, initialize the interest rate models and simulate them with Monte Carlo.
+
+```python
+from interest_rates import Euribor
+from ir_models import VasicekModel, CIRModel
+from monte_carlo import MonteCarlo
+```
 ### Fetching Euribor Data
 
 Historical Euribor data is available for the following maturities:
@@ -40,12 +45,6 @@ Historical Euribor data is available for the following maturities:
 - 3 months
 - 6 months
 - 12 months
-
-```
-from ir_forecast.interest_rates import Euribor
-
-r = Euribor(maturity="3 months")
-```
 
 There are four methods for fetching the data:
 
@@ -56,7 +55,9 @@ There are four methods for fetching the data:
 
 The `get_current()` method returns the most recent rate of the previous business day as a float, whereas the others return date indexed DataFrames for the user specified date ranges:
 
-```
+```python
+# Monthly Euribor rates from January 2024 to July 2025
+r = Euribor(maturity="3 months")
 monthly = r.get_monthly(start="2024/01", end="2025/07")
 print(monthly)
 ```
@@ -100,26 +101,20 @@ Both models are initialized with the following parameters:
 - T: time horizon in years (default 1)
 - N: the number of time steps to simulate (default 252, the amount of business days in a year)
 
-Let's assume an arbitrary example with a mean reversion speed of 0.5, long-term mean interest rate of 2%, 0.2 volatility and an initial interest rate of 4%:
+Example: Current interest rate is 0.03, long-term mean is 0.05, volatility is 0.02 and mean reversion speed is 1.5:
 
-```
-from ir_forecast.ir_models import VasicekModel, CIRModel
-
-theta_val = 0.5
-mu_val = 0.02
-vol = 0.2
-initial = 0.04
+```python
+# Vasicek model; CIR model uses the same parameters
+mean_reversion_speed = 1.5
+long_term_mean = 0.05
+volatility = 0.02
+initial_rate = 0.03
 
 # Use default T = 1 and N = 252 for both models
-vasicek = VasicekModel(theta=theta_val,
-                       mu=mu_val,
-                       sigma=volatility,
-                       r0=initial)
-
-cir = CIRModel(theta=theta_val,
-               mu=mu_val,
-               sigma=volatility,
-               r0=initial)
+vasicek = VasicekModel(theta=mean_reversion_speed,
+                       mu=long_term_mean,
+                       sigma=volatility,
+                       r0=initial_rate)
 ```
 ### Simulating Interest Rate Paths with Monte Carlo
 
@@ -128,16 +123,14 @@ cir = CIRModel(theta=theta_val,
 
 Simulate the Vasicek Model with 100 Monte Carlo simulation runs:
 
-```
-from ir_forecast.monte_carlo import MonteCarlo
-
+```python
 vasicek_mc = MonteCarlo(model=vasicek,
                         number_of_simulations=100)
 ```
 
 The `results()` method returns a DataFrame with each column representing a single simulation run. The `visualize()` method shows the simulated interest rate paths alongside with 0.9, 0.5 and 0.1 quantiles:
 
-```
+```python
 vasicek_mc.visualize()
 ```
 
@@ -145,14 +138,14 @@ vasicek_mc.visualize()
 
 The `stats()` method shows summary statistic of the simulation:
 
-```
+```python
 print(vasicek_mc.stats())
 ```
 
 |                            |   Results for 100 simulations |
 |:---------------------------|------------------------------:|
-| Initial Interest Rate (r0) |                     0.04      |
-| Long-Term Mean (mu)        |                     0.02      |
-| 90% quantile               |                     0.197756  |
-| 50% quantile               |                     0.0150644 |
-| 10% quantile               |                    -0.15431   |
+| Initial Interest Rate (r0) |                     0.03      |
+| Long-Term Mean (mu)        |                     0.05      |
+| 90% quantile               |                     0.0561224 |
+| 50% quantile               |                     0.0441878 |
+| 10% quantile               |                     0.0315277 |
