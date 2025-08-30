@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 from ir_models import *
 
 class MonteCarlo():
@@ -72,17 +73,30 @@ class MonteCarlo():
         df = self.results()
         q = self.__quantiles()
 
-        fig,ax = plt.subplots()
-        ax.set_xlim([0,self.__params["N"]])
+        fig,(ax1,ax2) = plt.subplots(1,2,
+                                     width_ratios=[5,1],
+                                     sharey=True,
+                                     constrained_layout=True)
 
-        for c in df.columns:
-            plt.plot(df[c],linewidth=0.5)
+        sns.lineplot(df,ax=ax1,palette="PuBu",legend=False)
+        sns.kdeplot(y=df.mean(axis=0),fill=True,ax=ax2)
 
-        plt.plot(q["q9"],"--",color="0.3",label=".9 quantile")
-        plt.plot(q["q5"],"k--",label=".5 quantile")
-        plt.plot(q["q1"],"--",color="0.3",label=".1 quantile")
+        ax1.plot(q["q9"],color="orange")
+        ax1.plot(q["q5"],color="orange")
+        ax1.plot(q["q1"],color="orange")
 
-        plt.legend()
+        ax2.axhline(q["q9"].iloc[-1],color="orange",ls="--",lw=1,label=".9")
+        ax2.axhline(q["q5"].iloc[-1],color="orange",ls="--",lw=1,label=".5")
+        ax2.axhline(q["q1"].iloc[-1],color="orange",ls="--",lw=1,label=".1")
+
+        fig.suptitle("Simulated Interest Rate Paths & Density Plot")
+        ax1.set_ylabel("Interest Rate")
+        ax1.set_xlabel(f"Time Step (T = {self.__params["N"]})")
+        ax1.set_xlim([0,self.__params["N"]])
+        ax2.set_xticks([]) # remove ticks and labels from the density plot
+        ax2.set_xlabel(None)
+
+        plt.legend(title="Quantiles")
         plt.show()
 
     
