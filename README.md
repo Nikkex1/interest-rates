@@ -11,12 +11,13 @@ Work with historical Euribor data and forecast interest rates utilizing stochast
 - Simulate and visualize interest rate paths with Monte Carlo simulations
 ## Requirements
 
-NumPy, pandas and Matplotlib are required:
+NumPy, pandas, Matplotlib and seaborn are required:
 
 ```python
 pip install numpy
 pip install pandas
 pip install matplotlib
+pip install seaborn
 ```
 
 The Anaconda distribution for Python is recommended, which includes all the requirements:
