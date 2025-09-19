@@ -109,7 +109,7 @@ class CIRModel():
         # dr = theta * (mu-r[t-1]) * dt + sigma * sqrt(dt) * rand_normal
         # rate[t] = rate[t-1] + dr
         for t in range(1,self.__N):
-            dr = self.__theta * (self.__mu - self.__rates[t-1]) * self.__dt + self.__sigma * np.sqrt(self.__dt) * np.sqrt(max(0,self.__rates[t-1])) * np.random.rand()
+            dr = self.__theta * (self.__mu - self.__rates[t-1]) * self.__dt + self.__sigma * np.sqrt(self.__dt) * np.sqrt(max(0,self.__rates[t-1])) * np.random.normal()
             self.__rates[t] = self.__rates[t-1] + dr
 
         return self.__rates
