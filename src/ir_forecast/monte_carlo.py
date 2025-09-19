@@ -78,25 +78,27 @@ class MonteCarlo():
                                      sharey=True,
                                      constrained_layout=True)
 
-        sns.lineplot(df,ax=ax1,palette="PuBu",legend=False)
-        sns.kdeplot(y=df.mean(axis=0),fill=True,ax=ax2)
+        sns.lineplot(df,ax=ax1,palette="PuBu",legend=False,zorder=1)
+        sns.kdeplot(y=df.iloc[-1,:],fill=True,ax=ax2,color="steelblue")
 
-        ax1.plot(q["q9"],color="orange")
-        ax1.plot(q["q5"],color="orange")
-        ax1.plot(q["q1"],color="orange")
+        # Median and confidence bound
+        ax1.plot(q["q5"],color="orange",ls=":",label="Median")
+        ax1.fill_between(df.index,q["q1"],q["q9"],
+                         color="orange",alpha=0.3,zorder=2)
 
-        ax2.axhline(q["q9"].iloc[-1],color="orange",ls="--",lw=1,label=".9")
-        ax2.axhline(q["q5"].iloc[-1],color="orange",ls="--",lw=1,label=".5")
-        ax2.axhline(q["q1"].iloc[-1],color="orange",ls="--",lw=1,label=".1")
+        #ax2.axhline(q["q9"].iloc[-1],color="orange",ls="--",lw=1)
+        ax2.axhline(q["q5"].iloc[-1],color="orange",ls=":",label="Median")
+        #ax2.axhline(q["q1"].iloc[-1],color="orange",ls="--",lw=1)
 
-        fig.suptitle("Simulated Interest Rate Paths & Density Plot")
+        mdl = "Vasicek" if self.__model == VasicekModel else "CIR"
+        fig.suptitle(f"Simulated Interest Rate Paths & Density Plot ({mdl})")
         ax1.set_ylabel("Interest Rate")
         ax1.set_xlabel(f"Time Step (T = {self.__params["N"]})")
         ax1.set_xlim([0,self.__params["N"]])
         ax2.set_xticks([]) # remove ticks and labels from the density plot
         ax2.set_xlabel(None)
 
-        plt.legend(title="Quantiles")
+        plt.legend(title="Legend")
         plt.show()
 
     
