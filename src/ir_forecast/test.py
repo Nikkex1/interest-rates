@@ -7,7 +7,7 @@ r = Euribor(maturity="3 months")
 monthly = r.get_monthly(start="2024/01", end="2025/07")
 print(monthly)
 
-# Vasicek model; CIR model uses the same parameters
+# Using the same parameters for both Vasicek and CIR models
 mean_reversion_speed = 1.5
 long_term_mean = 0.05
 volatility = 0.02
@@ -19,8 +19,21 @@ vasicek = VasicekModel(theta=mean_reversion_speed,
                        sigma=volatility,
                        r0=initial_rate)
 
+cir = CIRModel(theta=mean_reversion_speed,
+               mu=long_term_mean,
+               sigma=volatility,
+               r0=initial_rate)
+
 # Monte Carlo simulation with 100 simulation runs
 vasicek_mc = MonteCarlo(model=vasicek,
                         number_of_simulations=100)
+
+cir_mc = MonteCarlo(model=cir,
+                    number_of_simulations=100)
+
 vasicek_mc.visualize()
-print(vasicek_mc.stats())
+cir_mc.visualize()
+
+# Summary statistics for both models
+print(vasicek_mc.stats().to_markdown())
+print(cir_mc.stats().to_markdown())

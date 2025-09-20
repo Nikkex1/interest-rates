@@ -105,7 +105,7 @@ Both models are initialized with the following parameters:
 Example: Current interest rate is 0.03, long-term mean is 0.05, volatility is 0.02 and mean reversion speed is 1.5:
 
 ```python
-# Vasicek model; CIR model uses the same parameters
+# Using the same parameters for both Vasicek and CIR models
 mean_reversion_speed = 1.5
 long_term_mean = 0.05
 volatility = 0.02
@@ -116,6 +116,11 @@ vasicek = VasicekModel(theta=mean_reversion_speed,
                        mu=long_term_mean,
                        sigma=volatility,
                        r0=initial_rate)
+
+cir = CIRModel(theta=mean_reversion_speed,
+               mu=long_term_mean,
+               sigma=volatility,
+               r0=initial_rate)
 ```
 ### Simulating Interest Rate Paths with Monte Carlo
 
@@ -125,28 +130,49 @@ vasicek = VasicekModel(theta=mean_reversion_speed,
 Simulate the Vasicek Model with 100 Monte Carlo simulation runs:
 
 ```python
+# Monte Carlo simulation with 100 simulation runs
 vasicek_mc = MonteCarlo(model=vasicek,
-                        number_of_simulations=100)
+                        number_of_simulations=100)
+
+cir_mc = MonteCarlo(model=cir,
+                    number_of_simulations=100)
 ```
 
-The `results()` method returns a DataFrame with each column representing a single simulation run. The `visualize()` method shows the simulated interest rate paths alongside with 0.9, 0.5 and 0.1 quantiles:
+The `results()` method returns a DataFrame with each column representing a single simulation run. The `visualize()` method shows the results alongside with 0.9 and 0.1 confidence bounds and the median:
 
 ```python
 vasicek_mc.visualize()
+cir_mc.visualize()
 ```
 
-![Image of the simulated interest rate paths.](mc_example.png)
+![Image of the simulated interest rate paths using Vasicek.](vasicek_example.png)
 
-The `stats()` method shows summary statistic of the simulation:
+![Image of the simulated interest rate paths using CIR.](cir_example.png)
+
+The `stats()` method shows summary statistic of the simulations:
 
 ```python
 print(vasicek_mc.stats())
 ```
 
-|                            |   Results for 100 simulations |
-|:---------------------------|------------------------------:|
-| Initial Interest Rate (r0) |                     0.03      |
-| Long-Term Mean (mu)        |                     0.05      |
-| 90% quantile               |                     0.0561224 |
-| 50% quantile               |                     0.0441878 |
-| 10% quantile               |                     0.0315277 |
+|                            | Results for 100 simulations   |
+|:---------------------------|:------------------------------|
+| Model                      | Vasicek                       |
+| Initial Interest Rate (r0) | 0.03                          |
+| Long-Term Mean (mu)        | 0.05                          |
+| 90% quantile at T = 252    | 0.06308053381856575           |
+| Median at T = 252          | 0.04662813286319578           |
+| 10% quantile at T = 252    | 0.029547065622756635          |
+
+```python
+print(cir_mc.stats())
+```
+
+|                            | Results for 100 simulations   |
+|:---------------------------|:------------------------------|
+| Model                      | CIR                           |
+| Initial Interest Rate (r0) | 0.03                          |
+| Long-Term Mean (mu)        | 0.05                          |
+| 90% quantile at T = 252    | 0.04893487926964539           |
+| Median at T = 252          | 0.045827135163105465          |
+| 10% quantile at T = 252    | 0.04260202605388624           |
