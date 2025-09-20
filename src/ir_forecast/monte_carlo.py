@@ -19,6 +19,7 @@ class MonteCarlo():
         """
 
         self.__model = model
+        self.__name = "Vasicek" if type(self.__model) == VasicekModel else "CIR"
         self.__nsims = number_of_simulations
         self.__params = model.get_params()
 
@@ -49,13 +50,15 @@ class MonteCarlo():
         q5 = qs["q5"].iloc[-1]
         q9 = qs["q9"].iloc[-1]
 
-        labels = ["Initial Interest Rate (r0)",
+        labels = ["Model",
+                  "Initial Interest Rate (r0)",
                   "Long-Term Mean (mu)",
-                  "90% quantile",
-                  "50% quantile",
-                  "10% quantile"]
+                  f"90% quantile at T = {self.__params["N"]}",
+                  f"Median at T = {self.__params["N"]}",
+                  f"10% quantile at T = {self.__params["N"]}"]
         
-        data = [self.__params["r0"],
+        data = [self.__name,
+                self.__params["r0"],
                 self.__params["mu"],
                 q9,
                 q5,
@@ -90,8 +93,7 @@ class MonteCarlo():
         ax2.axhline(q["q5"].iloc[-1],color="orange",ls=":",label="Median")
         ax2.axhline(q["q1"].iloc[-1],color="orange",ls="--",lw=1,label="Lower bound .1")
 
-        mdl = "Vasicek" if self.__model == VasicekModel else "CIR"
-        fig.suptitle(f"Simulated Interest Rate Paths & Density Plot ({mdl})")
+        fig.suptitle(f"Simulated Interest Rate Paths & Density Plot ({self.__name})")
         ax1.set_ylabel("Interest Rate")
         ax1.set_xlabel(f"Time Step (T = {self.__params["N"]})")
         ax1.set_xlim([0,self.__params["N"]])
