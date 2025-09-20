@@ -79,16 +79,16 @@ class MonteCarlo():
                                      constrained_layout=True)
 
         sns.lineplot(df,ax=ax1,palette="PuBu",legend=False,zorder=1)
-        sns.kdeplot(y=df.iloc[-1,:],fill=True,ax=ax2,color="steelblue")
+        sns.kdeplot(y=df.iloc[-1,:],fill=True,ax=ax2,color="steelblue",zorder=1)
 
         # Median and confidence bound
         ax1.plot(q["q5"],color="orange",ls=":",label="Median")
         ax1.fill_between(df.index,q["q1"],q["q9"],
                          color="orange",alpha=0.3,zorder=2)
 
-        #ax2.axhline(q["q9"].iloc[-1],color="orange",ls="--",lw=1)
+        ax2.axhline(q["q9"].iloc[-1],color="orange",ls="--",lw=1,label="Upper bound .9")
         ax2.axhline(q["q5"].iloc[-1],color="orange",ls=":",label="Median")
-        #ax2.axhline(q["q1"].iloc[-1],color="orange",ls="--",lw=1)
+        ax2.axhline(q["q1"].iloc[-1],color="orange",ls="--",lw=1,label="Lower bound .1")
 
         mdl = "Vasicek" if self.__model == VasicekModel else "CIR"
         fig.suptitle(f"Simulated Interest Rate Paths & Density Plot ({mdl})")
